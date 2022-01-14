@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fft import fft, fftfreq
 
-
-
 # Define filePath
 # ---------------------- #
 root = tk.Tk()
@@ -123,7 +121,14 @@ ax[2].set_xlabel("Time [s]")
 # # ax[1].set_ylim([0, 300])
 
 fig.suptitle(f'{fileDir}', fontsize=10)
-plt.subplots_adjust(left=0.05, bottom=0.07, right=0.965, top=0.9, wspace=0.2, hspace=0.4)
+plt.subplots_adjust(
+    left=0.05,
+    bottom=0.07,
+    right=0.965,
+    top=0.9,
+    wspace=0.2,
+    hspace=0.4
+)
 plt.savefig(outputFile, format='png', bbox_inches='tight', dpi=150)
 
 # Number of sample points
@@ -145,7 +150,14 @@ yf3 = [a - b for a, b in zip(yf1, yf2)]
 # 1Hz plot
 # ------------
 fig2, ax2 = plt.subplots(3)
-plt.subplots_adjust(left=0.05, bottom=0.06, right=0.97, top=0.9, wspace=0.2, hspace=0.4)
+plt.subplots_adjust(
+    left=0.05,
+    bottom=0.06,
+    right=0.97,
+    top=0.9,
+    wspace=0.2,
+    hspace=0.4
+)
 ax2[0].plot(
     xf,
     2.0/N * np.abs(yf1[0:N//2]),
@@ -185,7 +197,7 @@ xcoords = [0.16, 0.33]
 # colors for the lines
 colors = ['r', 'k']
 
-for xc, c in zip(xcoords,colors):
+for xc, c in zip(xcoords, colors):
     ax2[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
     trans = ax2[0].get_xaxis_transform()
     ax2[0].text(xc, .5, xc, transform=trans)
@@ -237,7 +249,14 @@ fig2.suptitle(f'{fileDir}', fontsize=10)
 # 10 Hz plot
 # ------------
 fig3, ax3 = plt.subplots(3)
-plt.subplots_adjust(left=0.05, bottom=0.06, right=0.97, top=0.9, wspace=0.2, hspace=0.4)
+plt.subplots_adjust(
+    left=0.05,
+    bottom=0.06,
+    right=0.97,
+    top=0.9,
+    wspace=0.2,
+    hspace=0.4
+)
 ax3[0].plot(
     xf,
     2.0/N * np.abs(yf1[0:N//2]),
@@ -277,7 +296,7 @@ xcoords = [2.32, 5.0]
 # colors for the lines
 colors = ['r', 'k']
 
-for xc, c in zip(xcoords,colors):
+for xc, c in zip(xcoords, colors):
     ax3[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c, alpha=0.5)
     trans = ax3[0].get_xaxis_transform()
     ax3[0].text(xc, .5, xc, transform=trans)
