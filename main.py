@@ -35,6 +35,29 @@ def get_data(path=''):
     return df, file_path, file_dir, file_name
 
 
+def set_start(data):
+    """
+    Finds the start of the EoL test run and removes data beforehand. 
+    Adjusts 'Event Time' channel to 0s at start
+    """
+    # File 1
+    EoL_start_1 = np.argwhere(np.array(data['OP Speed 1']) < 5).flatten().tolist()
+    EoL_start_1 = [i for i in EoL_start_1 if i != 0]
+
+    EoL_start_2 = np.argwhere(np.array(data['Event Time']) < 300).flatten().tolist()
+    EoL_start_2 = [i for i in EoL_start_2 if i != 0]
+
+    EoL_start_3 = np.argwhere(np.array(data['[V9] Pri. GBox Oil Temp']) > 20).flatten().tolist()
+    EoL_start_3 = [i for i in EoL_start_3 if i != 0]
+
+    EoL_start = sorted(list(set(EoL_start_1).intersection(EoL_start_2, EoL_start_3)))[-1]
+
+    data = data.loc[EoL_start:len(data)].copy()
+    data.reset_index(drop=True, inplace=True)
+    data["Event Time"] = data.loc[:, "Event Time"] - data.loc[0, "Event Time"]
+    return data
+
+
 def calc_sample_rate(data):
     """
     Calculates the sample rate from a given dataset
@@ -123,10 +146,11 @@ rdata, fpath, fdir, fname = get_data()
 outputFile = f'{fdir}/{fname}.jpg'
 print(f'OUTPUT FILE: {outputFile}')
 
-filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 5).flatten().tolist()
+# filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
+rdata = set_start(rdata)
 
-rdata.drop(filter_, inplace=True)
-rdata.reset_index(drop=True, inplace=True)
+# rdata.drop(filter_, inplace=True)
+# rdata.reset_index(drop=True, inplace=True)
 
 x_major = 5
 x_minor = 1
