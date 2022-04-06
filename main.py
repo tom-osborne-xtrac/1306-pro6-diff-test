@@ -37,7 +37,7 @@ def get_data(path=''):
 
 def set_start(data):
     """
-    Finds the start of the EoL test run and removes data beforehand. 
+    Finds the start of the EoL test run and removes data beforehand.
     Adjusts 'Event Time' channel to 0s at start
     """
     # File 1
@@ -146,14 +146,14 @@ rdata, fpath, fdir, fname = get_data()
 outputFile = f'{fdir}/{fname}.jpg'
 print(f'OUTPUT FILE: {outputFile}')
 
-# filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
-rdata = set_start(rdata)
+filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
+# rdata = set_start(rdata)
 
-# rdata.drop(filter_, inplace=True)
-# rdata.reset_index(drop=True, inplace=True)
+rdata.drop(filter_, inplace=True)
+rdata.reset_index(drop=True, inplace=True)
 
-x_major = 5
-x_minor = 1
+x_major = 50
+x_minor = 10
 time_min = rdata['Event Time'].min(numeric_only=True)
 time_max = rdata['Event Time'].max(numeric_only=True)
 startx = math.floor(time_min / x_major) * x_major
@@ -184,13 +184,13 @@ ax[0].set_title("Shaft Speeds", loc='left')
 ax[0].legend(loc=4)
 
 plot_df(rdata, ax[1], 'Event Time', 'TCM MaiShaftNBas', 'Mainshaft Speed [rpm]', 'red')
-set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 300, 50, 10)
+set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 500, 50, 10)
 ax[1].set_title("Mainshaft Speed", loc='left')
 ax[1].legend(loc=4)
 
 plot_df(rdata, ax[2], 'Event Time', 'OP Torque 1', 'LH OP Torque 1 [Nm]', 'purple')
 plot_df(rdata, ax[2], 'Event Time', 'OP Torque 2', 'RH OP Torque 2 [Nm]', 'orange')
-set_axis([ax[2]], 'y', 'Torque [Nm]', -80, 0, 10, 5)
+set_axis([ax[2]], 'y', 'Torque [Nm]', -100, 40, 10, 5)
 ax[2].set_title("Output Torque", loc='left')
 ax[2].legend(loc=4)
 
