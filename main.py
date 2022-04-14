@@ -142,6 +142,11 @@ def calc_difference(data_a, data_b):
     return [a - b for a, b in zip(data_a, data_b)]
 
 
+config = {
+    "show_IPTrq": True,
+    "show_FreqPlots": False
+}
+
 rdata, fpath, fdir, fname = get_data()
 outputFile = f'{fdir}/{fname}.jpg'
 print(f'OUTPUT FILE: {outputFile}')
@@ -169,7 +174,7 @@ fig.suptitle(f'{fname}', fontsize=10)
 plt.subplots_adjust(
     left=0.05,
     bottom=0.07,
-    right=0.965,
+    right=0.955,
     top=0.9,
     wspace=0.2,
     hspace=0.4
@@ -179,250 +184,259 @@ set_axis(ax, 'x', 'Time [s]', startx, endx, x_major, x_minor)
 plot_df(rdata, ax[0], 'Event Time', 'OP Speed 1', 'LH OP Speed [rpm]', 'green')
 plot_df(rdata, ax[0], 'Event Time', 'OP Speed 2', 'RH OP Speed [rpm]', 'blue')
 plot_df(rdata, ax[0], 'Event Time', '1306 Oil In - TCM_SumpoilTBas', 'Oil Temp [degC]', 'magenta')
-set_axis([ax[0]], 'y', 'Speed [rpm] / Temp [degC]', 0, 100, 10, 5)
+set_axis([ax[0]], 'y', 'Speed [rpm] / Temp [degC]', 0, 100, 10, 10)
 ax[0].set_title("Shaft Speeds", loc='left')
-ax[0].legend(loc=4)
+ax[0].legend(loc=2)
 
 plot_df(rdata, ax[1], 'Event Time', 'TCM MaiShaftNBas', 'Mainshaft Speed [rpm]', 'red')
-set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 500, 50, 10)
+set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 500, 100, 50)
 ax[1].set_title("Mainshaft Speed", loc='left')
-ax[1].legend(loc=4)
+ax[1].legend(loc=2)
+
+if config["show_IPTrq"] == True:
+    ax2 = ax[0].twinx()
+    plot_df(rdata, ax2, 'Event Time', 'IP Torque 1', 'Input Torque [Nm]', 'darkcyan')
+    set_axis([ax2], 'y', 'Torque [Nm]', 0, 25, 5, 5)
+    ax2.legend(loc=1)
+
 
 plot_df(rdata, ax[2], 'Event Time', 'OP Torque 1', 'LH OP Torque 1 [Nm]', 'purple')
 plot_df(rdata, ax[2], 'Event Time', 'OP Torque 2', 'RH OP Torque 2 [Nm]', 'orange')
-set_axis([ax[2]], 'y', 'Torque [Nm]', -100, 40, 10, 5)
+set_axis([ax[2]], 'y', 'Torque [Nm]', -200, 200, 50, 10)
 ax[2].set_title("Output Torque", loc='left')
 ax[2].legend(loc=4)
 
 plt.savefig(outputFile, format='png', bbox_inches='tight', dpi=150)
 
-#  Figure 2 - FFT Plots
-# Number of sample points
-sr = calc_sample_rate(rdata)
 
-trq1_fft_x, trq1_fft_y = prepare_fft(rdata, 'OP Torque 1', sr)
-trq2_fft_x, trq2_fft_y = prepare_fft(rdata, 'OP Torque 2', sr)
+if config["show_FreqPlots"] == True:
+    #  Figure 2 - FFT Plots
+    # Number of sample points
+    sr = calc_sample_rate(rdata)
 
-# N = len(rdata['OP Torque 1'])
-# # sample spacing
-# T = 1.0 / 160.0
-# # x = np.linspace(0.0, N*T, N, endpoint=False)
-# x = np.linspace(0.0, N*T, N, endpoint=False)
-# y1 = np.array(rdata['OP Torque 1']).flatten().tolist()
-# yf1 = fft(y1)
+    trq1_fft_x, trq1_fft_y = prepare_fft(rdata, 'OP Torque 1', sr)
+    trq2_fft_x, trq2_fft_y = prepare_fft(rdata, 'OP Torque 2', sr)
 
-# y2 = np.array(rdata['OP Torque 2']).flatten().tolist()
-# yf2 = fft(y2)
-# xf = fftfreq(N, T)[:N//2]
+    # N = len(rdata['OP Torque 1'])
+    # # sample spacing
+    # T = 1.0 / 160.0
+    # # x = np.linspace(0.0, N*T, N, endpoint=False)
+    # x = np.linspace(0.0, N*T, N, endpoint=False)
+    # y1 = np.array(rdata['OP Torque 1']).flatten().tolist()
+    # yf1 = fft(y1)
 
-# yf3 = [a - b for a, b in zip(yf1, yf2)]
+    # y2 = np.array(rdata['OP Torque 2']).flatten().tolist()
+    # yf2 = fft(y2)
+    # xf = fftfreq(N, T)[:N//2]
 
-# ------------
-# 1Hz plot
-# ------------
-fig2, ax2 = plt.subplots(3)
-plt.subplots_adjust(
-    left=0.05,
-    bottom=0.06,
-    right=0.97,
-    top=0.9,
-    wspace=0.2,
-    hspace=0.4
-)
+    # yf3 = [a - b for a, b in zip(yf1, yf2)]
 
-plot_series(ax2[0], trq1_fft_x, trq1_fft_y, 'FFT - LH OP Torque 1', 'purple')
-plot_series(ax2[1], trq2_fft_x, trq2_fft_y, 'FFT - RH OP Torque 2', 'orange')
-set_axis([ax2[0], ax2[1]], 'x', 'Frequency [Hz]', 0, 1, 0.1, 0.02)
-set_axis([ax2[0], ax2[1]], 'y', 'Frequency [Hz]', 0, 1, 0.2, 0.1)
+    # ------------
+    # 1Hz plot
+    # ------------
+    fig2, ax2 = plt.subplots(3)
+    plt.subplots_adjust(
+        left=0.05,
+        bottom=0.06,
+        right=0.97,
+        top=0.9,
+        wspace=0.2,
+        hspace=0.4
+    )
 
-plot_df(rdata, ax2[2], 'Event Time', 'OP Torque 1', 'LH OP Torque 1 [Nm]', 'purple')
-plot_df(rdata, ax2[2], 'Event Time', 'OP Torque 2', 'RH OP Torque 2 [Nm]', 'orange')
-set_axis([ax2[2]], 'x', 'Time [s]', startx, endx, x_major, x_minor)
-set_axis([ax2[2]], 'y', 'Torque [Nm]', -80, 0, 10, 5)
+    plot_series(ax2[0], trq1_fft_x, trq1_fft_y, 'FFT - LH OP Torque 1', 'purple')
+    plot_series(ax2[1], trq2_fft_x, trq2_fft_y, 'FFT - RH OP Torque 2', 'orange')
+    set_axis([ax2[0], ax2[1]], 'x', 'Frequency [Hz]', 0, 1, 0.1, 0.02)
+    set_axis([ax2[0], ax2[1]], 'y', 'Frequency [Hz]', 0, 1, 0.2, 0.1)
 
-# ax2[0].plot(
-#     trq1_fft_x,
-#     trq1_fft_y,
-#     color="purple",
-#     label="FFT",
-#     marker=None
-# )
-# ax2[1].plot(
-#     trq2_fft_x,
-#     trq2_fft_y,
-#     color="orange",
-#     label="FFT",
-#     marker=None
-# )
-# ax2[2].plot(
-#     rdata['Event Time'],
-#     rdata['OP Torque 1'],
-#     color="purple",
-#     label="LH OP Torque 1 [Nm]",
-#     marker=None
-# )
-# ax2[2].plot(
-#     rdata['Event Time'],
-#     rdata['OP Torque 2'],
-#     color="orange",
-#     label="RH OP Torque 2 [Nm]",
-#     marker=None
-# )
-ax2[2].set_title("Output Torque", loc='left')
-ax2[2].legend(loc=4)
+    plot_df(rdata, ax2[2], 'Event Time', 'OP Torque 1', 'LH OP Torque 1 [Nm]', 'purple')
+    plot_df(rdata, ax2[2], 'Event Time', 'OP Torque 2', 'RH OP Torque 2 [Nm]', 'orange')
+    set_axis([ax2[2]], 'x', 'Time [s]', startx, endx, x_major, x_minor)
+    set_axis([ax2[2]], 'y', 'Torque [Nm]', -80, 0, 10, 5)
 
-# x coordinates for the lines
-xcoords = [0.16, 0.33]
-# colors for the lines
-colors = ['r', 'k']
+    # ax2[0].plot(
+    #     trq1_fft_x,
+    #     trq1_fft_y,
+    #     color="purple",
+    #     label="FFT",
+    #     marker=None
+    # )
+    # ax2[1].plot(
+    #     trq2_fft_x,
+    #     trq2_fft_y,
+    #     color="orange",
+    #     label="FFT",
+    #     marker=None
+    # )
+    # ax2[2].plot(
+    #     rdata['Event Time'],
+    #     rdata['OP Torque 1'],
+    #     color="purple",
+    #     label="LH OP Torque 1 [Nm]",
+    #     marker=None
+    # )
+    # ax2[2].plot(
+    #     rdata['Event Time'],
+    #     rdata['OP Torque 2'],
+    #     color="orange",
+    #     label="RH OP Torque 2 [Nm]",
+    #     marker=None
+    # )
+    ax2[2].set_title("Output Torque", loc='left')
+    ax2[2].legend(loc=4)
 
-add_vert_lines(ax2[0], xcoords, colors)
+    # x coordinates for the lines
+    xcoords = [0.16, 0.33]
+    # colors for the lines
+    colors = ['r', 'k']
 
-# for xc, c in zip(xcoords, colors):
-#     ax2[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
-#     trans = ax2[0].get_xaxis_transform()
-#     ax2[0].text(xc, .5, xc, transform=trans)
-#     ax2[1].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
-#     trans = ax2[1].get_xaxis_transform()
-#     ax2[1].text(xc, .5, xc, transform=trans)
+    add_vert_lines(ax2[0], xcoords, colors)
 
-# # Major ticks every 20, minor ticks every 5
-# major_ticks = np.arange(0, 1.1, 0.1)
-# minor_ticks = np.arange(0, 1.1, 0.05)
+    # for xc, c in zip(xcoords, colors):
+    #     ax2[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
+    #     trans = ax2[0].get_xaxis_transform()
+    #     ax2[0].text(xc, .5, xc, transform=trans)
+    #     ax2[1].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
+    #     trans = ax2[1].get_xaxis_transform()
+    #     ax2[1].text(xc, .5, xc, transform=trans)
 
-# ax2[0].set_xticks(major_ticks)
-# ax2[0].set_xticks(minor_ticks, minor=True)
+    # # Major ticks every 20, minor ticks every 5
+    # major_ticks = np.arange(0, 1.1, 0.1)
+    # minor_ticks = np.arange(0, 1.1, 0.05)
 
-
-# # And a corresponding grid
-# ax2[0].grid(which='both')
-
-# # Or if you want different settings for the grids:
-# ax2[0].grid(which='minor', alpha=0.2)
-# ax2[0].grid(which='major', alpha=0.5)
+    # ax2[0].set_xticks(major_ticks)
+    # ax2[0].set_xticks(minor_ticks, minor=True)
 
 
-# ax2[1].set_xticks(major_ticks)
-# ax2[1].set_xticks(minor_ticks, minor=True)
+    # # And a corresponding grid
+    # ax2[0].grid(which='both')
 
-# # And a corresponding grid
-# ax2[1].grid(which='both')
-
-# # Or if you want different settings for the grids:
-# ax2[1].grid(which='minor', alpha=0.2)
-# ax2[1].grid(which='major', alpha=0.5)
+    # # Or if you want different settings for the grids:
+    # ax2[0].grid(which='minor', alpha=0.2)
+    # ax2[0].grid(which='major', alpha=0.5)
 
 
-# ax2[0].set_xlabel("Frequency [Hz]")
-# ax2[1].set_xlabel("Frequency [Hz]")
+    # ax2[1].set_xticks(major_ticks)
+    # ax2[1].set_xticks(minor_ticks, minor=True)
 
-# ax2[0].set_xlim([0, 1])
-# ax2[0].set_ylim([0, 1])
-# ax2[1].set_xlim([0, 1])
-# ax2[1].set_ylim([0, 1])
-# ax2[0].set_title("LH Output Torque FFT", loc='left')
-# ax2[1].set_title("RH Output Torque FFT", loc='left')
+    # # And a corresponding grid
+    # ax2[1].grid(which='both')
 
-fig2.suptitle(f'{fname}', fontsize=10)
+    # # Or if you want different settings for the grids:
+    # ax2[1].grid(which='minor', alpha=0.2)
+    # ax2[1].grid(which='major', alpha=0.5)
 
 
-# ------------
-# 10 Hz plot
-# ------------
-fig3, ax3 = plt.subplots(3)
-plt.subplots_adjust(
-    left=0.05,
-    bottom=0.06,
-    right=0.97,
-    top=0.9,
-    wspace=0.2,
-    hspace=0.4
-)
-ax3[0].plot(
-    trq1_fft_x,
-    trq1_fft_y,
-    color="purple",
-    label="FFT",
-    marker=None
-)
-ax3[1].plot(
-    trq2_fft_x,
-    trq2_fft_y,
-    color="orange",
-    label="FFT",
-    marker=None
-)
-ax3[2].plot(
-    rdata['Event Time'],
-    rdata['OP Torque 1'],
-    color="purple",
-    label="LH OP Torque 1 [Nm]",
-    marker=None
-)
-ax3[2].plot(
-    rdata['Event Time'],
-    rdata['OP Torque 2'],
-    color="orange",
-    label="RH OP Torque 2 [Nm]",
-    marker=None
-)
-ax3[2].set_title("Output Torque", loc='left')
-ax3[2].grid()
-ax3[2].legend(loc=4)
-# ax[0].set_xlim([0, max_data_EventTime])
-ax3[2].set_xlabel("Time [s]")
+    # ax2[0].set_xlabel("Frequency [Hz]")
+    # ax2[1].set_xlabel("Frequency [Hz]")
 
-# x coordinates for the lines
-xcoords = [2.32, 5.0]
-# colors for the lines
-colors = ['r', 'k']
+    # ax2[0].set_xlim([0, 1])
+    # ax2[0].set_ylim([0, 1])
+    # ax2[1].set_xlim([0, 1])
+    # ax2[1].set_ylim([0, 1])
+    # ax2[0].set_title("LH Output Torque FFT", loc='left')
+    # ax2[1].set_title("RH Output Torque FFT", loc='left')
 
-for xc, c in zip(xcoords, colors):
-    ax3[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c, alpha=0.5)
-    trans = ax3[0].get_xaxis_transform()
-    ax3[0].text(xc, .5, xc, transform=trans)
-    ax3[1].axvline(x=xc, label='line at x = {}'.format(xc), c=c, alpha=0.5)
-    trans = ax3[1].get_xaxis_transform()
-    ax3[1].text(xc, .5, xc, transform=trans)
-
-# Major ticks every 20, minor ticks every 5
-major_ticks = np.arange(0, 11, 1)
-minor_ticks = np.arange(0, 11, 0.5)
-
-ax3[0].set_xticks(major_ticks)
-ax3[0].set_xticks(minor_ticks, minor=True)
+    fig2.suptitle(f'{fname}', fontsize=10)
 
 
-# And a corresponding grid
-ax3[0].grid(which='both')
+    # ------------
+    # 10 Hz plot
+    # ------------
+    fig3, ax3 = plt.subplots(3)
+    plt.subplots_adjust(
+        left=0.05,
+        bottom=0.06,
+        right=0.97,
+        top=0.9,
+        wspace=0.2,
+        hspace=0.4
+    )
+    ax3[0].plot(
+        trq1_fft_x,
+        trq1_fft_y,
+        color="purple",
+        label="FFT",
+        marker=None
+    )
+    ax3[1].plot(
+        trq2_fft_x,
+        trq2_fft_y,
+        color="orange",
+        label="FFT",
+        marker=None
+    )
+    ax3[2].plot(
+        rdata['Event Time'],
+        rdata['OP Torque 1'],
+        color="purple",
+        label="LH OP Torque 1 [Nm]",
+        marker=None
+    )
+    ax3[2].plot(
+        rdata['Event Time'],
+        rdata['OP Torque 2'],
+        color="orange",
+        label="RH OP Torque 2 [Nm]",
+        marker=None
+    )
+    ax3[2].set_title("Output Torque", loc='left')
+    ax3[2].grid()
+    ax3[2].legend(loc=4)
+    # ax[0].set_xlim([0, max_data_EventTime])
+    ax3[2].set_xlabel("Time [s]")
 
-# Or if you want different settings for the grids:
-ax3[0].grid(which='minor', alpha=0.2)
-ax3[0].grid(which='major', alpha=0.5)
+    # x coordinates for the lines
+    xcoords = [2.32, 5.0]
+    # colors for the lines
+    colors = ['r', 'k']
+
+    for xc, c in zip(xcoords, colors):
+        ax3[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c, alpha=0.5)
+        trans = ax3[0].get_xaxis_transform()
+        ax3[0].text(xc, .5, xc, transform=trans)
+        ax3[1].axvline(x=xc, label='line at x = {}'.format(xc), c=c, alpha=0.5)
+        trans = ax3[1].get_xaxis_transform()
+        ax3[1].text(xc, .5, xc, transform=trans)
+
+    # Major ticks every 20, minor ticks every 5
+    major_ticks = np.arange(0, 11, 1)
+    minor_ticks = np.arange(0, 11, 0.5)
+
+    ax3[0].set_xticks(major_ticks)
+    ax3[0].set_xticks(minor_ticks, minor=True)
 
 
-ax3[1].set_xticks(major_ticks)
-ax3[1].set_xticks(minor_ticks, minor=True)
+    # And a corresponding grid
+    ax3[0].grid(which='both')
 
-# And a corresponding grid
-ax3[1].grid(which='both')
-
-# Or if you want different settings for the grids:
-ax3[1].grid(which='minor', alpha=0.2)
-ax3[1].grid(which='major', alpha=0.5)
+    # Or if you want different settings for the grids:
+    ax3[0].grid(which='minor', alpha=0.2)
+    ax3[0].grid(which='major', alpha=0.5)
 
 
-ax3[0].set_xlabel("Frequency [Hz]")
-ax3[1].set_xlabel("Frequency [Hz]")
+    ax3[1].set_xticks(major_ticks)
+    ax3[1].set_xticks(minor_ticks, minor=True)
 
-ax3[0].set_xlim([0, 10])
-ax3[0].set_ylim([0, 1])
-ax3[1].set_xlim([0, 10])
-ax3[1].set_ylim([0, 1])
-ax3[0].set_title("LH Output Torque FFT", loc='left')
-ax3[1].set_title("RH Output Torque FFT", loc='left')
+    # And a corresponding grid
+    ax3[1].grid(which='both')
 
-fig3.suptitle(f'{fdir}', fontsize=10)
+    # Or if you want different settings for the grids:
+    ax3[1].grid(which='minor', alpha=0.2)
+    ax3[1].grid(which='major', alpha=0.5)
+
+
+    ax3[0].set_xlabel("Frequency [Hz]")
+    ax3[1].set_xlabel("Frequency [Hz]")
+
+    ax3[0].set_xlim([0, 10])
+    ax3[0].set_ylim([0, 1])
+    ax3[1].set_xlim([0, 10])
+    ax3[1].set_ylim([0, 1])
+    ax3[0].set_title("LH Output Torque FFT", loc='left')
+    ax3[1].set_title("RH Output Torque FFT", loc='left')
+
+    fig3.suptitle(f'{fdir}', fontsize=10)
 
 
 plt.show()
