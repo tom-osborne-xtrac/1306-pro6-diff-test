@@ -193,10 +193,10 @@ set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 500, 100, 50)
 ax[1].set_title("Mainshaft Speed", loc='left')
 ax[1].legend(loc=2)
 
-if config["show_IPTrq"] == True:
+if config["show_IPTrq"] is True:
     ax2 = ax[0].twinx()
     plot_df(rdata, ax2, 'Event Time', 'IP Torque 1', 'Input Torque [Nm]', 'darkcyan')
-    set_axis([ax2], 'y', 'Torque [Nm]', 0, 25, 5, 5)
+    set_axis([ax2], 'y', 'Torque [Nm]', 0, 50, 10, 5)
     ax2.legend(loc=1)
 
 
@@ -206,10 +206,10 @@ set_axis([ax[2]], 'y', 'Torque [Nm]', -200, 200, 50, 10)
 ax[2].set_title("Output Torque", loc='left')
 ax[2].legend(loc=4)
 
-plt.savefig(outputFile, format='png', bbox_inches='tight', dpi=150)
+# plt.savefig(outputFile, format='png', bbox_inches='tight', dpi=150)
 
 
-if config["show_FreqPlots"] == True:
+if config["show_FreqPlots"] is True:
     #  Figure 2 - FFT Plots
     # Number of sample points
     sr = calc_sample_rate(rdata)
@@ -307,14 +307,12 @@ if config["show_FreqPlots"] == True:
     # ax2[0].set_xticks(major_ticks)
     # ax2[0].set_xticks(minor_ticks, minor=True)
 
-
     # # And a corresponding grid
     # ax2[0].grid(which='both')
 
     # # Or if you want different settings for the grids:
     # ax2[0].grid(which='minor', alpha=0.2)
     # ax2[0].grid(which='major', alpha=0.5)
-
 
     # ax2[1].set_xticks(major_ticks)
     # ax2[1].set_xticks(minor_ticks, minor=True)
@@ -325,7 +323,6 @@ if config["show_FreqPlots"] == True:
     # # Or if you want different settings for the grids:
     # ax2[1].grid(which='minor', alpha=0.2)
     # ax2[1].grid(which='major', alpha=0.5)
-
 
     # ax2[0].set_xlabel("Frequency [Hz]")
     # ax2[1].set_xlabel("Frequency [Hz]")
@@ -338,7 +335,6 @@ if config["show_FreqPlots"] == True:
     # ax2[1].set_title("RH Output Torque FFT", loc='left')
 
     fig2.suptitle(f'{fname}', fontsize=10)
-
 
     # ------------
     # 10 Hz plot
@@ -406,14 +402,12 @@ if config["show_FreqPlots"] == True:
     ax3[0].set_xticks(major_ticks)
     ax3[0].set_xticks(minor_ticks, minor=True)
 
-
     # And a corresponding grid
     ax3[0].grid(which='both')
 
     # Or if you want different settings for the grids:
     ax3[0].grid(which='minor', alpha=0.2)
     ax3[0].grid(which='major', alpha=0.5)
-
 
     ax3[1].set_xticks(major_ticks)
     ax3[1].set_xticks(minor_ticks, minor=True)
@@ -424,7 +418,6 @@ if config["show_FreqPlots"] == True:
     # Or if you want different settings for the grids:
     ax3[1].grid(which='minor', alpha=0.2)
     ax3[1].grid(which='major', alpha=0.5)
-
 
     ax3[0].set_xlabel("Frequency [Hz]")
     ax3[1].set_xlabel("Frequency [Hz]")
