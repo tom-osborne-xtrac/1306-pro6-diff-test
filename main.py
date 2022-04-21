@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fft import fft, fftfreq
 
+config = {
+    "save_plot": True,
+    "show_IPTrq": True,
+    "show_FreqPlots": False
+}
+
 
 def get_data(path=''):
     """
@@ -142,11 +148,6 @@ def calc_difference(data_a, data_b):
     return [a - b for a, b in zip(data_a, data_b)]
 
 
-config = {
-    "show_IPTrq": True,
-    "show_FreqPlots": False
-}
-
 rdata, fpath, fdir, fname = get_data()
 outputFile = f'{fdir}/{fname}.jpg'
 print(f'OUTPUT FILE: {outputFile}')
@@ -193,10 +194,10 @@ set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 500, 100, 50)
 ax[1].set_title("Mainshaft Speed", loc='left')
 ax[1].legend(loc=2)
 
-if config["show_IPTrq"] is True:
+if config["show_IPTrq"]:
     ax2 = ax[0].twinx()
     plot_df(rdata, ax2, 'Event Time', 'IP Torque 1', 'Input Torque [Nm]', 'darkcyan')
-    set_axis([ax2], 'y', 'Torque [Nm]', 0, 50, 10, 5)
+    set_axis([ax2], 'y', 'Torque [Nm]', 0, 100, 20, 10)
     ax2.legend(loc=1)
 
 
@@ -206,10 +207,11 @@ set_axis([ax[2]], 'y', 'Torque [Nm]', -200, 200, 50, 10)
 ax[2].set_title("Output Torque", loc='left')
 ax[2].legend(loc=4)
 
-# plt.savefig(outputFile, format='png', bbox_inches='tight', dpi=150)
+if config["save_plot"]:
+    plt.savefig(outputFile, format='png', bbox_inches='tight', dpi=150)
 
 
-if config["show_FreqPlots"] is True:
+if config["show_FreqPlots"]:
     #  Figure 2 - FFT Plots
     # Number of sample points
     sr = calc_sample_rate(rdata)
