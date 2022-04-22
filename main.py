@@ -158,8 +158,8 @@ filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
 rdata.drop(filter_, inplace=True)
 rdata.reset_index(drop=True, inplace=True)
 
-x_major = 50
-x_minor = 10
+x_major = 500
+x_minor = 25
 time_min = rdata['Event Time'].min(numeric_only=True)
 time_max = rdata['Event Time'].max(numeric_only=True)
 startx = math.floor(time_min / x_major) * x_major
