@@ -213,25 +213,10 @@ if config["save_plot"]:
 
 if config["show_FreqPlots"]:
     #  Figure 2 - FFT Plots
-    # Number of sample points
     sr = calc_sample_rate(rdata)
 
     trq1_fft_x, trq1_fft_y = prepare_fft(rdata, 'OP Torque 1', sr)
     trq2_fft_x, trq2_fft_y = prepare_fft(rdata, 'OP Torque 2', sr)
-
-    # N = len(rdata['OP Torque 1'])
-    # # sample spacing
-    # T = 1.0 / 160.0
-    # # x = np.linspace(0.0, N*T, N, endpoint=False)
-    # x = np.linspace(0.0, N*T, N, endpoint=False)
-    # y1 = np.array(rdata['OP Torque 1']).flatten().tolist()
-    # yf1 = fft(y1)
-
-    # y2 = np.array(rdata['OP Torque 2']).flatten().tolist()
-    # yf2 = fft(y2)
-    # xf = fftfreq(N, T)[:N//2]
-
-    # yf3 = [a - b for a, b in zip(yf1, yf2)]
 
     # ------------
     # 1Hz plot
@@ -256,34 +241,6 @@ if config["show_FreqPlots"]:
     set_axis([ax2[2]], 'x', 'Time [s]', startx, endx, x_major, x_minor)
     set_axis([ax2[2]], 'y', 'Torque [Nm]', -80, 0, 10, 5)
 
-    # ax2[0].plot(
-    #     trq1_fft_x,
-    #     trq1_fft_y,
-    #     color="purple",
-    #     label="FFT",
-    #     marker=None
-    # )
-    # ax2[1].plot(
-    #     trq2_fft_x,
-    #     trq2_fft_y,
-    #     color="orange",
-    #     label="FFT",
-    #     marker=None
-    # )
-    # ax2[2].plot(
-    #     rdata['Event Time'],
-    #     rdata['OP Torque 1'],
-    #     color="purple",
-    #     label="LH OP Torque 1 [Nm]",
-    #     marker=None
-    # )
-    # ax2[2].plot(
-    #     rdata['Event Time'],
-    #     rdata['OP Torque 2'],
-    #     color="orange",
-    #     label="RH OP Torque 2 [Nm]",
-    #     marker=None
-    # )
     ax2[2].set_title("Output Torque", loc='left')
     ax2[2].legend(loc=4)
 
@@ -293,48 +250,6 @@ if config["show_FreqPlots"]:
     colors = ['r', 'k']
 
     add_vert_lines(ax2[0], xcoords, colors)
-
-    # for xc, c in zip(xcoords, colors):
-    #     ax2[0].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
-    #     trans = ax2[0].get_xaxis_transform()
-    #     ax2[0].text(xc, .5, xc, transform=trans)
-    #     ax2[1].axvline(x=xc, label='line at x = {}'.format(xc), c=c)
-    #     trans = ax2[1].get_xaxis_transform()
-    #     ax2[1].text(xc, .5, xc, transform=trans)
-
-    # # Major ticks every 20, minor ticks every 5
-    # major_ticks = np.arange(0, 1.1, 0.1)
-    # minor_ticks = np.arange(0, 1.1, 0.05)
-
-    # ax2[0].set_xticks(major_ticks)
-    # ax2[0].set_xticks(minor_ticks, minor=True)
-
-    # # And a corresponding grid
-    # ax2[0].grid(which='both')
-
-    # # Or if you want different settings for the grids:
-    # ax2[0].grid(which='minor', alpha=0.2)
-    # ax2[0].grid(which='major', alpha=0.5)
-
-    # ax2[1].set_xticks(major_ticks)
-    # ax2[1].set_xticks(minor_ticks, minor=True)
-
-    # # And a corresponding grid
-    # ax2[1].grid(which='both')
-
-    # # Or if you want different settings for the grids:
-    # ax2[1].grid(which='minor', alpha=0.2)
-    # ax2[1].grid(which='major', alpha=0.5)
-
-    # ax2[0].set_xlabel("Frequency [Hz]")
-    # ax2[1].set_xlabel("Frequency [Hz]")
-
-    # ax2[0].set_xlim([0, 1])
-    # ax2[0].set_ylim([0, 1])
-    # ax2[1].set_xlim([0, 1])
-    # ax2[1].set_ylim([0, 1])
-    # ax2[0].set_title("LH Output Torque FFT", loc='left')
-    # ax2[1].set_title("RH Output Torque FFT", loc='left')
 
     fig2.suptitle(f'{fname}', fontsize=10)
 
@@ -432,6 +347,5 @@ if config["show_FreqPlots"]:
     ax3[1].set_title("RH Output Torque FFT", loc='left')
 
     fig3.suptitle(f'{fdir}', fontsize=10)
-
 
 plt.show()
