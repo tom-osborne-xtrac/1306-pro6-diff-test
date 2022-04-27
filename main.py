@@ -8,10 +8,10 @@ import numpy as np
 from scipy.fft import fft, fftfreq
 
 config = {
-    "save_plot": True,
-    "show_IPTrq": True,
-    "show_FreqPlots": False,
-    "test_type": "scen123"  # options: ["bedding", "scen123"]
+    "save_plot": True,          # Boolean
+    "show_IPTrq": True,         # Boolean
+    "show_FreqPlots": False,    # Boolean
+    "test_type": "scen123"      # options: ["bedding", "scen123"]
 }
 
 
