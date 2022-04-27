@@ -171,9 +171,8 @@ rdata, fpath, fdir, fname = get_data()
 outputFile = f'{fdir}/{fname}.jpg'
 print(f'OUTPUT FILE: {outputFile}')
 
-filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
 # rdata = set_start(rdata)
-
+filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
 rdata.drop(filter_, inplace=True)
 rdata.reset_index(drop=True, inplace=True)
 
