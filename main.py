@@ -10,7 +10,8 @@ from scipy.fft import fft, fftfreq
 config = {
     "save_plot": True,
     "show_IPTrq": True,
-    "show_FreqPlots": False
+    "show_FreqPlots": False,
+    "test_type": "scen123"  # options: ["bedding", "scen123"]
 }
 
 
@@ -148,6 +149,24 @@ def calc_difference(data_a, data_b):
     return [a - b for a, b in zip(data_a, data_b)]
 
 
+def set_ticks(test_type):
+    match test_type:
+        case "bedding":
+            return {
+                "x": (250, 10),             # major, minor
+                "y0": (0, 100, 10, 10),     # lower limit, upper limit, major, minor
+                "y1": (0, 500, 100, 50),    # lower limit, upper limit, major, minor
+                "y2": (-200, 200, 20, 5)    # lower limit, upper limit, major, minor
+            }
+        case "scen123":
+            return {
+                "x": (50, 10),              # major, minor
+                "y0": (0, 100, 10, 10),     # lower limit, upper limit, major, minor
+                "y1": (0, 500, 100, 50),    # lower limit, upper limit, major, minor
+                "y2": (-100, 40, 20, 5)     # lower limit, upper limit, major, minor
+            }
+
+
 rdata, fpath, fdir, fname = get_data()
 outputFile = f'{fdir}/{fname}.jpg'
 print(f'OUTPUT FILE: {outputFile}')
@@ -158,8 +177,10 @@ filter_ = np.argwhere(np.array(rdata['OP Speed 1']) < 2).flatten().tolist()
 rdata.drop(filter_, inplace=True)
 rdata.reset_index(drop=True, inplace=True)
 
-x_major = 500
-x_minor = 25
+plot_settings = set_ticks(config["test_type"])
+x_major, x_minor = plot_settings["x"]
+print(x_major, x_minor)
+
 time_min = rdata['Event Time'].min(numeric_only=True)
 time_max = rdata['Event Time'].max(numeric_only=True)
 startx = math.floor(time_min / x_major) * x_major
@@ -185,12 +206,28 @@ set_axis(ax, 'x', 'Time [s]', startx, endx, x_major, x_minor)
 plot_df(rdata, ax[0], 'Event Time', 'OP Speed 1', 'LH OP Speed [rpm]', 'green')
 plot_df(rdata, ax[0], 'Event Time', 'OP Speed 2', 'RH OP Speed [rpm]', 'blue')
 plot_df(rdata, ax[0], 'Event Time', '1306 Oil In - TCM_SumpoilTBas', 'Oil Temp [degC]', 'magenta')
-set_axis([ax[0]], 'y', 'Speed [rpm] / Temp [degC]', 0, 100, 10, 10)
+set_axis(
+    [ax[0]],
+    'y',
+    'Speed [rpm] / Temp [degC]',
+    plot_settings["y0"][0],
+    plot_settings["y0"][1],
+    plot_settings["y0"][2],
+    plot_settings["y0"][3]
+)
 ax[0].set_title("Shaft Speeds", loc='left')
 ax[0].legend(loc=2)
 
 plot_df(rdata, ax[1], 'Event Time', 'TCM MaiShaftNBas', 'Mainshaft Speed [rpm]', 'red')
-set_axis([ax[1]], 'y', 'Speed [rpm]', 0, 500, 100, 50)
+set_axis(
+    [ax[1]],
+    'y',
+    'Speed [rpm]',
+    plot_settings["y1"][0],
+    plot_settings["y1"][1],
+    plot_settings["y1"][2],
+    plot_settings["y1"][3]
+)
 ax[1].set_title("Mainshaft Speed", loc='left')
 ax[1].legend(loc=2)
 
@@ -203,7 +240,15 @@ if config["show_IPTrq"]:
 
 plot_df(rdata, ax[2], 'Event Time', 'OP Torque 1', 'LH OP Torque 1 [Nm]', 'purple')
 plot_df(rdata, ax[2], 'Event Time', 'OP Torque 2', 'RH OP Torque 2 [Nm]', 'orange')
-set_axis([ax[2]], 'y', 'Torque [Nm]', -200, 200, 50, 10)
+set_axis(
+    [ax[2]],
+    'y',
+    'Torque [Nm]',
+    plot_settings["y2"][0],
+    plot_settings["y2"][1],
+    plot_settings["y2"][2],
+    plot_settings["y2"][3]
+)
 ax[2].set_title("Output Torque", loc='left')
 ax[2].legend(loc=4)
 
