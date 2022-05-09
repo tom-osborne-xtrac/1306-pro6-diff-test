@@ -26,6 +26,7 @@ def get_data(path=''):
         root = tk.Tk()
         root.withdraw()
         file_path = filedialog.askopenfilename()
+        file_path = filedialog.askopenfilename()
     else:
         file_path = path
     file_name = os.path.basename(file_path)
@@ -160,7 +161,7 @@ def set_ticks(test_type):
             }
         case "scen123":
             return {
-                "x": (50, 10),              # major, minor
+                "x": (50, 5),               # major, minor
                 "y0": (0, 100, 10, 10),     # lower limit, upper limit, major, minor
                 "y1": (0, 500, 100, 50),    # lower limit, upper limit, major, minor
                 "y2": (-100, 40, 20, 5)     # lower limit, upper limit, major, minor
